@@ -1,7 +1,6 @@
 "use client";
 
 import { File } from "lucide-react";
-import { Card, CardBody } from "@heroui/card";
 
 interface FileEmptyStateProps {
   activeTab: string;
@@ -9,8 +8,8 @@ interface FileEmptyStateProps {
 
 export default function FileEmptyState({ activeTab }: FileEmptyStateProps) {
   return (
-    <Card className="border border-default-200 bg-default-50">
-      <CardBody className="text-center py-16">
+    <div className="border border-default-200 bg-default-50">
+      <div className="text-center py-16">
         <File className="h-16 w-16 mx-auto text-primary/50 mb-6" />
         <h3 className="text-xl font-medium mb-2">
           {activeTab === "all" && "No files available"}
@@ -25,7 +24,7 @@ export default function FileEmptyState({ activeTab }: FileEmptyStateProps) {
           {activeTab === "trash" &&
             "Files you delete will appear here for 30 days before being permanently removed"}
         </p>
-      </CardBody>
-    </Card>
+      </div>
+    </div>
   );
 }

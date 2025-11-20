@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { Card, CardBody, CardHeader } from "@heroui/card";
-import { Tabs, Tab } from "@heroui/tabs";
+// Replaced HeroUI Card and Tabs with plain HTML + Tailwind
 import { FileUp, FileText, User } from "lucide-react";
 import FileUploadForm from "@/components/FileUploadForm";
 import FileList from "@/components/FileList";
@@ -59,76 +58,69 @@ export default function DashboardContent({
         </p>
       </div>
 
-      <Tabs
-        aria-label="Dashboard Tabs"
-        color="primary"
-        variant="underlined"
-        selectedKey={activeTab}
-        onSelectionChange={(key) => setActiveTab(key as string)}
-        classNames={{
-          tabList: "gap-6",
-          tab: "py-3",
-          cursor: "bg-primary",
-        }}
-      >
-        <Tab
-          key="files"
-          title={
-            <div className="flex items-center gap-3">
-              <FileText className="h-5 w-5" />
-              <span className="font-medium">My Files</span>
-            </div>
-          }
+      <nav className="flex gap-6 border-b border-default-200">
+        <button
+          className={`py-3 flex items-center gap-3 ${
+            activeTab === "files" ? "border-b-2 border-primary font-medium" : "text-default-600"
+          }`}
+          onClick={() => setActiveTab("files")}
         >
-          <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-1">
-              <Card className="border border-default-200 bg-default-50 shadow-sm hover:shadow-md transition-shadow">
-                <CardHeader className="flex gap-3">
-                  <FileUp className="h-5 w-5 text-primary" />
-                  <h2 className="text-xl font-semibold">Upload</h2>
-                </CardHeader>
-                <CardBody>
-                  <FileUploadForm
-                    userId={userId}
-                    onUploadSuccess={handleFileUploadSuccess}
-                    currentFolder={currentFolder}
-                  />
-                </CardBody>
-              </Card>
-            </div>
+          <FileText className="h-5 w-5" />
+          <span>My Files</span>
+        </button>
 
-            <div className="lg:col-span-2">
-              <Card className="border border-default-200 bg-default-50 shadow-sm hover:shadow-md transition-shadow">
-                <CardHeader className="flex gap-3">
-                  <FileText className="h-5 w-5 text-primary" />
-                  <h2 className="text-xl font-semibold">Your Files</h2>
-                </CardHeader>
-                <CardBody>
-                  <FileList
-                    userId={userId}
-                    refreshTrigger={refreshTrigger}
-                    onFolderChange={handleFolderChange}
-                  />
-                </CardBody>
-              </Card>
+        <button
+          className={`py-3 flex items-center gap-3 ${
+            activeTab === "profile" ? "border-b-2 border-primary font-medium" : "text-default-600"
+          }`}
+          onClick={() => setActiveTab("profile")}
+        >
+          <User className="h-5 w-5" />
+          <span>Profile</span>
+        </button>
+      </nav>
+
+      {activeTab === "files" && (
+        <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-1">
+            <div className="border border-default-200 bg-default-50 shadow-sm hover:shadow-md transition-shadow rounded-md overflow-hidden">
+              <div className="flex gap-3 items-center px-4 py-3">
+                <FileUp className="h-5 w-5 text-primary" />
+                <h2 className="text-xl font-semibold">Upload</h2>
+              </div>
+              <div className="p-4">
+                <FileUploadForm
+                  userId={userId}
+                  onUploadSuccess={handleFileUploadSuccess}
+                  currentFolder={currentFolder}
+                />
+              </div>
             </div>
           </div>
-        </Tab>
 
-        <Tab
-          key="profile"
-          title={
-            <div className="flex items-center gap-3">
-              <User className="h-5 w-5" />
-              <span className="font-medium">Profile</span>
+          <div className="lg:col-span-2">
+            <div className="border border-default-200 bg-default-50 shadow-sm hover:shadow-md transition-shadow rounded-md overflow-hidden">
+              <div className="flex gap-3 items-center px-4 py-3">
+                <FileText className="h-5 w-5 text-primary" />
+                <h2 className="text-xl font-semibold">Your Files</h2>
+              </div>
+              <div className="p-4">
+                <FileList
+                  userId={userId}
+                  refreshTrigger={refreshTrigger}
+                  onFolderChange={handleFolderChange}
+                />
+              </div>
             </div>
-          }
-        >
-          <div className="mt-8">
-            <UserProfile />
           </div>
-        </Tab>
-      </Tabs>
+        </div>
+      )}
+
+      {activeTab === "profile" && (
+        <div className="mt-8">
+          <UserProfile />
+        </div>
+      )}
     </>
   );
 }

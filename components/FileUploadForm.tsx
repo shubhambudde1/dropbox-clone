@@ -1,9 +1,6 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Button } from "@heroui/button";
-import { Progress } from "@heroui/progress";
-import { Input } from "@heroui/input";
 import {
   Upload,
   X,
@@ -12,14 +9,7 @@ import {
   FolderPlus,
   ArrowRight,
 } from "lucide-react";
-import { addToast } from "@heroui/toast";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "@heroui/modal";
+// Replaced HeroUI Button, Progress, Input, Modal and Toast with plain HTML/Tailwind
 import axios from "axios";
 
 interface FileUploadFormProps {
@@ -116,11 +106,7 @@ export default function FileUploadForm({
         },
       });
 
-      addToast({
-        title: "Upload Successful",
-        description: `${file.name} has been uploaded successfully.`,
-        color: "success",
-      });
+      console.log("Upload Successful:", `${file.name} has been uploaded successfully.`);
 
       // Clear the file after successful upload
       clearFile();
@@ -132,11 +118,7 @@ export default function FileUploadForm({
     } catch (error) {
       console.error("Error uploading file:", error);
       setError("Failed to upload file. Please try again.");
-      addToast({
-        title: "Upload Failed",
-        description: "We couldn't upload your file. Please try again.",
-        color: "danger",
-      });
+      console.error("Upload Failed: We couldn't upload your file. Please try again.");
     } finally {
       setUploading(false);
     }
@@ -144,11 +126,7 @@ export default function FileUploadForm({
 
   const handleCreateFolder = async () => {
     if (!folderName.trim()) {
-      addToast({
-        title: "Invalid Folder Name",
-        description: "Please enter a valid folder name.",
-        color: "danger",
-      });
+      console.error("Invalid Folder Name: Please enter a valid folder name.");
       return;
     }
 
@@ -161,11 +139,7 @@ export default function FileUploadForm({
         parentId: currentFolder,
       });
 
-      addToast({
-        title: "Folder Created",
-        description: `Folder "${folderName}" has been created successfully.`,
-        color: "success",
-      });
+      console.log("Folder Created:", `Folder "${folderName}" has been created successfully.`);
 
       // Reset folder name and close modal
       setFolderName("");
@@ -177,11 +151,7 @@ export default function FileUploadForm({
       }
     } catch (error) {
       console.error("Error creating folder:", error);
-      addToast({
-        title: "Folder Creation Failed",
-        description: "We couldn't create the folder. Please try again.",
-        color: "danger",
-      });
+      console.error("Folder Creation Failed: We couldn't create the folder. Please try again.");
     } finally {
       setCreatingFolder(false);
     }
@@ -191,24 +161,14 @@ export default function FileUploadForm({
     <div className="space-y-4">
       {/* Action buttons */}
       <div className="flex gap-2 mb-2">
-        <Button
-          color="primary"
-          variant="flat"
-          startContent={<FolderPlus className="h-4 w-4" />}
-          onClick={() => setFolderModalOpen(true)}
-          className="flex-1"
-        >
-          New Folder
-        </Button>
-        <Button
-          color="primary"
-          variant="flat"
-          startContent={<FileUp className="h-4 w-4" />}
-          onClick={() => fileInputRef.current?.click()}
-          className="flex-1"
-        >
-          Add Image
-        </Button>
+        <button type="button" onClick={() => setFolderModalOpen(true)} className="flex-1 px-3 py-2 rounded bg-default-100 hover:bg-default-200 flex items-center justify-center gap-2">
+          <FolderPlus className="h-4 w-4" />
+          <span>New Folder</span>
+        </button>
+        <button type="button" onClick={() => fileInputRef.current?.click()} className="flex-1 px-3 py-2 rounded bg-default-100 hover:bg-default-200 flex items-center justify-center gap-2">
+          <FileUp className="h-4 w-4" />
+          <span>Add Image</span>
+        </button>
       </div>
 
       {/* File drop area */}
@@ -239,13 +199,7 @@ export default function FileUploadForm({
               </p>
               <p className="text-xs text-default-500 mt-1">Images up to 5MB</p>
             </div>
-            <Input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              className="hidden"
-              accept="image/*"
-            />
+            <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
           </div>
         ) : (
           <div className="space-y-3">
@@ -267,15 +221,9 @@ export default function FileUploadForm({
                   </p>
                 </div>
               </div>
-              <Button
-                isIconOnly
-                variant="light"
-                size="sm"
-                onClick={clearFile}
-                className="text-default-500"
-              >
+              <button type="button" onClick={clearFile} className="text-default-500 p-1 rounded hover:bg-default-100">
                 <X className="h-4 w-4" />
-              </Button>
+              </button>
             </div>
 
             {error && (
@@ -286,26 +234,19 @@ export default function FileUploadForm({
             )}
 
             {uploading && (
-              <Progress
-                value={progress}
-                color="primary"
-                size="sm"
-                showValueLabel={true}
-                className="max-w-full"
-              />
+              <div className="w-full bg-default-200 rounded-full h-2 overflow-hidden">
+                <div className="h-2 bg-primary" style={{ width: `${progress}%` }} />
+              </div>
             )}
 
-            <Button
-              color="primary"
-              startContent={<Upload className="h-4 w-4" />}
-              endContent={!uploading && <ArrowRight className="h-4 w-4" />}
+            <button
+              type="button"
               onClick={handleUpload}
-              isLoading={uploading}
-              className="w-full"
-              isDisabled={!!error}
+              disabled={!!error || uploading}
+              className="w-full px-4 py-2 rounded bg-primary text-white disabled:opacity-60"
             >
               {uploading ? `Uploading... ${progress}%` : "Upload Image"}
-            </Button>
+            </button>
           </div>
         )}
       </div>
@@ -320,57 +261,30 @@ export default function FileUploadForm({
         </ul>
       </div>
 
-      {/* Create Folder Modal */}
-      <Modal
-        isOpen={folderModalOpen}
-        onOpenChange={setFolderModalOpen}
-        backdrop="blur"
-        classNames={{
-          base: "border border-default-200 bg-default-5",
-          header: "border-b border-default-200",
-          footer: "border-t border-default-200",
-        }}
-      >
-        <ModalContent>
-          <ModalHeader className="flex gap-2 items-center">
-            <FolderPlus className="h-5 w-5 text-primary" />
-            <span>New Folder</span>
-          </ModalHeader>
-          <ModalBody>
-            <div className="space-y-4">
-              <p className="text-sm text-default-600">
-                Enter a name for your folder:
-              </p>
-              <Input
-                type="text"
-                label="Folder Name"
-                placeholder="My Images"
-                value={folderName}
-                onChange={(e) => setFolderName(e.target.value)}
-                autoFocus
-              />
+      {/* Create Folder Modal (simple implementation) */}
+      {folderModalOpen && (
+        <div role="dialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setFolderModalOpen(false)} />
+          <div className="relative z-10 w-full max-w-md mx-4">
+            <div className="rounded-lg border border-default-200 bg-white shadow-lg overflow-hidden">
+              <div className="flex gap-2 items-center px-4 py-3 border-b border-default-200">
+                <FolderPlus className="h-5 w-5 text-primary" />
+                <span className="font-medium">New Folder</span>
+              </div>
+              <div className="p-4">
+                <div className="space-y-4">
+                  <p className="text-sm text-default-600">Enter a name for your folder:</p>
+                  <input type="text" placeholder="My Images" value={folderName} onChange={(e) => setFolderName(e.target.value)} autoFocus className="w-full border border-default-200 rounded px-3 py-2" />
+                </div>
+              </div>
+              <div className="flex justify-end gap-3 px-4 py-3 border-t border-default-200">
+                <button type="button" className="px-3 py-1 rounded bg-default-100" onClick={() => setFolderModalOpen(false)}>Cancel</button>
+                <button type="button" className="px-3 py-1 rounded bg-primary text-white" onClick={handleCreateFolder} disabled={!folderName.trim() || creatingFolder}>{creatingFolder ? 'Creating...' : 'Create'}</button>
+              </div>
             </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              variant="flat"
-              color="default"
-              onClick={() => setFolderModalOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              color="primary"
-              onClick={handleCreateFolder}
-              isLoading={creatingFolder}
-              isDisabled={!folderName.trim()}
-              endContent={!creatingFolder && <ArrowRight className="h-4 w-4" />}
-            >
-              Create
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

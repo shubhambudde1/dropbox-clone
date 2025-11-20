@@ -1,11 +1,11 @@
-import {heroui} from "@heroui/theme"
+// Removed HeroUI Tailwind plugin integration
 
 /** @type {import('tailwindcss').Config} */
 const config = {
   content: [
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
-    "./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}"
+    // removed HeroUI theme files from content
   ],
   theme: {
     extend: {
@@ -16,7 +16,7 @@ const config = {
     },
   },
   darkMode: "class",
-  plugins: [heroui()],
+  plugins: [],
 }
 
 module.exports = config;

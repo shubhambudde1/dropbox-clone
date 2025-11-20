@@ -1,7 +1,6 @@
 "use client";
 
 import { File, Star, Trash } from "lucide-react";
-import { Tabs, Tab } from "@heroui/tabs";
 import Badge from "@/components/ui/Badge";
 import type { File as FileType } from "@/lib/db/schema";
 
@@ -21,69 +20,33 @@ export default function FileTabs({
   trashCount,
 }: FileTabsProps) {
   return (
-    <Tabs
-      selectedKey={activeTab}
-      onSelectionChange={(key) => onTabChange(key as string)}
-      color="primary"
-      variant="underlined"
-      classNames={{
-        base: "w-full overflow-x-auto",
-        tabList: "gap-2 sm:gap-4 md:gap-6 flex-nowrap min-w-full",
-        tab: "py-3 whitespace-nowrap",
-        cursor: "bg-primary",
-      }}
-    >
-      <Tab
-        key="all"
-        title={
-          <div className="flex items-center gap-2 sm:gap-3">
-            <File className="h-4 w-4 sm:h-5 sm:w-5" />
-            <span className="font-medium">All Files</span>
-            <Badge
-              variant="flat"
-              color="default"
-              size="sm"
-              aria-label={`${files.filter((file) => !file.isTrash).length} files`}
-            >
-              {files.filter((file) => !file.isTrash).length}
-            </Badge>
-          </div>
-        }
-      />
-      <Tab
-        key="starred"
-        title={
-          <div className="flex items-center gap-2 sm:gap-3">
-            <Star className="h-4 w-4 sm:h-5 sm:w-5" />
-            <span className="font-medium">Starred</span>
-            <Badge
-              variant="flat"
-              color="warning"
-              size="sm"
-              aria-label={`${starredCount} starred files`}
-            >
-              {starredCount}
-            </Badge>
-          </div>
-        }
-      />
-      <Tab
-        key="trash"
-        title={
-          <div className="flex items-center gap-2 sm:gap-3">
-            <Trash className="h-4 w-4 sm:h-5 sm:w-5" />
-            <span className="font-medium">Trash</span>
-            <Badge
-              variant="solid"
-              color="danger"
-              size="sm"
-              aria-label={`${trashCount} files in trash`}
-            >
-              {trashCount}
-            </Badge>
-          </div>
-        }
-      />
-    </Tabs>
+    <nav className="w-full overflow-x-auto flex gap-2 sm:gap-4 md:gap-6">
+      <button
+        className={`py-3 whitespace-nowrap flex items-center gap-2 sm:gap-3 ${activeTab === 'all' ? 'border-b-2 border-primary font-medium' : 'text-default-600'}`}
+        onClick={() => onTabChange('all')}
+      >
+        <File className="h-4 w-4 sm:h-5 sm:w-5" />
+        <span className="font-medium">All Files</span>
+        <Badge variant="flat" color="default" size="sm" aria-label={`${files.filter((file) => !file.isTrash).length} files`}>{files.filter((file) => !file.isTrash).length}</Badge>
+      </button>
+
+      <button
+        className={`py-3 whitespace-nowrap flex items-center gap-2 sm:gap-3 ${activeTab === 'starred' ? 'border-b-2 border-primary font-medium' : 'text-default-600'}`}
+        onClick={() => onTabChange('starred')}
+      >
+        <Star className="h-4 w-4 sm:h-5 sm:w-5" />
+        <span className="font-medium">Starred</span>
+        <Badge variant="flat" color="warning" size="sm" aria-label={`${starredCount} starred files`}>{starredCount}</Badge>
+      </button>
+
+      <button
+        className={`py-3 whitespace-nowrap flex items-center gap-2 sm:gap-3 ${activeTab === 'trash' ? 'border-b-2 border-primary font-medium' : 'text-default-600'}`}
+        onClick={() => onTabChange('trash')}
+      >
+        <Trash className="h-4 w-4 sm:h-5 sm:w-5" />
+        <span className="font-medium">Trash</span>
+        <Badge variant="solid" color="danger" size="sm" aria-label={`${trashCount} files in trash`}>{trashCount}</Badge>
+      </button>
+    </nav>
   );
 }

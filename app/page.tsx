@@ -11,6 +11,32 @@ import {
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 
+// Lightweight replacements for removed HeroUI primitives
+const Button = ({ children, endContent, className = "", ...props }: any) => (
+  <button
+    {...props}
+    className={
+      "inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md font-medium transition-colors " +
+      className
+    }
+  >
+    {children}
+    {endContent}
+  </button>
+);
+
+const Card = ({ children, className = "", ...props }: any) => (
+  <div {...props} className={"rounded-lg overflow-hidden " + className}>
+    {children}
+  </div>
+);
+
+const CardBody = ({ children, className = "", ...props }: any) => (
+  <div {...props} className={className}>
+    {children}
+  </div>
+);
+
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-default-50">

@@ -4,14 +4,7 @@ import { useClerk, SignedIn, SignedOut } from "@clerk/nextjs";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { CloudUpload, ChevronDown, User, Menu, X } from "lucide-react";
-import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from "@heroui/dropdown";
-import { Avatar } from "@heroui/avatar";
-import { Button } from "@heroui/button";
+// Replaced HeroUI Dropdown, Avatar and Button with plain HTML + Tailwind
 import { useState, useEffect, useRef } from "react";
 
 interface SerializedUser {
@@ -34,6 +27,8 @@ export default function Navbar({ user }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement | null>(null);
 
   // Check if we're on the dashboard page
   const isOnDashboard =
@@ -96,6 +91,22 @@ export default function Navbar({ user }: NavbarProps) {
     };
   }, [isMobileMenuOpen]);
 
+  // Close user menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isUserMenuOpen &&
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isUserMenuOpen]);
+
   const handleSignOut = () => {
     signOut(() => {
       router.push("/");
@@ -127,6 +138,8 @@ export default function Navbar({ user }: NavbarProps) {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  const toggleUserMenu = () => setIsUserMenuOpen((s) => !s);
+
   return (
     <header
       className={`bg-default-50 border-b border-default-200 sticky top-0 z-50 transition-shadow ${isScrolled ? "shadow-sm" : ""}`}
@@ -144,88 +157,67 @@ export default function Navbar({ user }: NavbarProps) {
             {/* Show these buttons when user is signed out */}
             <SignedOut>
               <Link href="/sign-in">
-                <Button variant="flat" color="primary">
-                  Sign In
-                </Button>
+                <button className="px-3 py-1 rounded bg-transparent border border-transparent text-primary hover:bg-default-100">Sign In</button>
               </Link>
               <Link href="/sign-up">
-                <Button variant="solid" color="primary">
-                  Sign Up
-                </Button>
+                <button className="px-3 py-1 rounded bg-primary text-white">Sign Up</button>
               </Link>
             </SignedOut>
 
             {/* Show these when user is signed in */}
             <SignedIn>
               <div className="flex items-center gap-4">
-                {!isOnDashboard && (
-                  <Link href="/dashboard">
-                    <Button variant="flat" color="primary">
-                      Dashboard
-                    </Button>
-                  </Link>
-                )}
-                <Dropdown>
-                  <DropdownTrigger>
-                    <Button
-                      variant="flat"
-                      className="p-0 bg-transparent min-w-0"
-                      endContent={<ChevronDown className="h-4 w-4 ml-2" />}
+                  {!isOnDashboard && (
+                    <Link href="/dashboard">
+                      <button className="px-3 py-1 rounded bg-transparent border border-transparent text-primary hover:bg-default-100">Dashboard</button>
+                    </Link>
+                  )}
+
+                  <div className="relative" ref={userMenuRef}>
+                    <button
+                      onClick={toggleUserMenu}
+                      className="p-0 bg-transparent min-w-0 flex items-center gap-2"
+                      aria-expanded={isUserMenuOpen}
                     >
-                      <div className="flex items-center gap-2">
-                        <Avatar
-                          name={userDetails.initials}
-                          size="sm"
-                          src={user?.imageUrl || undefined}
-                          className="h-8 w-8 flex-shrink-0"
-                          fallback={<User className="h-4 w-4" />}
-                        />
-                        <span className="text-default-600 hidden sm:inline">
-                          {userDetails.displayName}
-                        </span>
+                      {user?.imageUrl ? (
+                        <img src={user.imageUrl} alt={userDetails.displayName} className="h-8 w-8 rounded-full object-cover" />
+                      ) : (
+                        <div className="h-8 w-8 rounded-full bg-default-100 flex items-center justify-center text-sm">
+                          {userDetails.initials}
+                        </div>
+                      )}
+                      <span className="text-default-600 hidden sm:inline">{userDetails.displayName}</span>
+                      <ChevronDown className="h-4 w-4 ml-2" />
+                    </button>
+
+                    {isUserMenuOpen && (
+                      <div className="absolute right-0 mt-2 w-44 bg-white border border-default-200 rounded shadow-lg z-50">
+                        <button className="w-full text-left px-4 py-2 hover:bg-default-100" onClick={() => { setIsUserMenuOpen(false); router.push('/dashboard?tab=profile'); }}>
+                          Profile
+                          <div className="text-xs text-default-400">{userDetails.email || 'View your profile'}</div>
+                        </button>
+                        <button className="w-full text-left px-4 py-2 hover:bg-default-100" onClick={() => { setIsUserMenuOpen(false); router.push('/dashboard'); }}>
+                          My Files
+                          <div className="text-xs text-default-400">Manage your files</div>
+                        </button>
+                        <button className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50" onClick={handleSignOut}>
+                          Sign Out
+                        </button>
                       </div>
-                    </Button>
-                  </DropdownTrigger>
-                  <DropdownMenu aria-label="User actions">
-                    <DropdownItem
-                      key="profile"
-                      description={userDetails.email || "View your profile"}
-                      onClick={() => router.push("/dashboard?tab=profile")}
-                    >
-                      Profile
-                    </DropdownItem>
-                    <DropdownItem
-                      key="files"
-                      description="Manage your files"
-                      onClick={() => router.push("/dashboard")}
-                    >
-                      My Files
-                    </DropdownItem>
-                    <DropdownItem
-                      key="logout"
-                      description="Sign out of your account"
-                      className="text-danger"
-                      color="danger"
-                      onClick={handleSignOut}
-                    >
-                      Sign Out
-                    </DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
-              </div>
+                    )}
+                  </div>
+                </div>
             </SignedIn>
           </div>
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-2">
             <SignedIn>
-              <Avatar
-                name={userDetails.initials}
-                size="sm"
-                src={user?.imageUrl || undefined}
-                className="h-8 w-8 flex-shrink-0"
-                fallback={<User className="h-4 w-4" />}
-              />
+              {user?.imageUrl ? (
+                <img src={user.imageUrl} alt={userDetails.displayName} className="h-8 w-8 rounded-full flex-shrink-0 object-cover" />
+              ) : (
+                <div className="h-8 w-8 rounded-full bg-default-100 flex items-center justify-center">{userDetails.initials}</div>
+              )}
             </SignedIn>
             <button
               className="z-50 p-2"
@@ -259,23 +251,11 @@ export default function Navbar({ user }: NavbarProps) {
           >
             <SignedOut>
               <div className="flex flex-col gap-4 items-center">
-                <Link
-                  href="/sign-in"
-                  className="w-full"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <Button variant="flat" color="primary" className="w-full">
-                    Sign In
-                  </Button>
+                <Link href="/sign-in" className="w-full" onClick={() => setIsMobileMenuOpen(false)}>
+                  <button className="w-full px-4 py-2 rounded bg-transparent border border-default-200 text-primary">Sign In</button>
                 </Link>
-                <Link
-                  href="/sign-up"
-                  className="w-full"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <Button variant="solid" color="primary" className="w-full">
-                    Sign Up
-                  </Button>
+                <Link href="/sign-up" className="w-full" onClick={() => setIsMobileMenuOpen(false)}>
+                  <button className="w-full px-4 py-2 rounded bg-primary text-white">Sign Up</button>
                 </Link>
               </div>
             </SignedOut>
@@ -284,18 +264,14 @@ export default function Navbar({ user }: NavbarProps) {
               <div className="flex flex-col gap-6">
                 {/* User info */}
                 <div className="flex items-center gap-3 py-4 border-b border-default-200">
-                  <Avatar
-                    name={userDetails.initials}
-                    size="md"
-                    src={user?.imageUrl || undefined}
-                    className="h-10 w-10 flex-shrink-0"
-                    fallback={<User className="h-5 w-5" />}
-                  />
+                  {user?.imageUrl ? (
+                    <img src={user.imageUrl} alt={userDetails.displayName} className="h-10 w-10 rounded-full flex-shrink-0 object-cover" />
+                  ) : (
+                    <div className="h-10 w-10 rounded-full bg-default-100 flex items-center justify-center">{userDetails.initials}</div>
+                  )}
                   <div>
                     <p className="font-medium">{userDetails.displayName}</p>
-                    <p className="text-sm text-default-500">
-                      {userDetails.email}
-                    </p>
+                    <p className="text-sm text-default-500">{userDetails.email}</p>
                   </div>
                 </div>
 

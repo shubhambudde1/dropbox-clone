@@ -12,13 +12,6 @@ export interface ProvidersProps {
   themeProps?: ThemeProviderProps;
 }
 
-declare module "@react-types/shared" {
-  interface RouterConfig {
-    routerOptions: NonNullable<
-      Parameters<ReturnType<typeof useRouter>["push"]>[1]
-    >;
-  }
-}
 
 // Create a context for ImageKit authentication
 export const ImageKitAuthContext = createContext<{
@@ -49,17 +42,14 @@ export function Providers({ children, themeProps }: ProvidersProps) {
   const router = useRouter();
 
   return (
-    <HeroUIProvider navigate={router.push}>
-      <ImageKitProvider
-        authenticator={authenticator}
-        publicKey={process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || ""}
-        urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || ""}
-      >
-        <ImageKitAuthContext.Provider value={{ authenticate: authenticator }}>
-          <ToastProvider placement="top-right" />
-          <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
-        </ImageKitAuthContext.Provider>
-      </ImageKitProvider>
-    </HeroUIProvider>
+    <ImageKitProvider
+      authenticator={authenticator}
+      publicKey={process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY || ""}
+      urlEndpoint={process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT || ""}
+    >
+      <ImageKitAuthContext.Provider value={{ authenticate: authenticator }}>
+        <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
+      </ImageKitAuthContext.Provider>
+    </ImageKitProvider>
   );
 }
