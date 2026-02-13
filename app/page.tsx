@@ -63,12 +63,12 @@ export default function Home() {
                 <div className="flex flex-wrap gap-4 pt-4 justify-center lg:justify-start">
                   <SignedOut>
                     <Link href="/sign-up">
-                      <Button size="lg" variant="solid" color="primary">
+                      <Button size="lg" variant="solid" color="primary" className="border-2 border-primary shadow-lg hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 active:scale-95 transition-all duration-200">
                         Get Started
                       </Button>
                     </Link>
                     <Link href="/sign-in">
-                      <Button size="lg" variant="flat" color="primary">
+                      <Button size="lg" variant="flat" color="primary" className="border-2 border-primary shadow-lg hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 active:scale-95 transition-all duration-200">
                         Sign In
                       </Button>
                     </Link>
@@ -80,6 +80,7 @@ export default function Home() {
                         variant="solid"
                         color="primary"
                         endContent={<ArrowRight className="h-4 w-4" />}
+                        className="border-2 border-primary shadow-lg hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 active:scale-95 transition-all duration-200"
                       >
                         Go to Dashboard
                       </Button>
@@ -161,6 +162,7 @@ export default function Home() {
                     variant="solid"
                     color="primary"
                     endContent={<ArrowRight className="h-4 w-4" />}
+                    className="border-2 border-primary shadow-lg hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 active:scale-95 transition-all duration-200"
                   >
                     Let's Go
                   </Button>

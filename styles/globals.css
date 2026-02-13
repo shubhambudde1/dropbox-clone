@@ -1,3 +1,67 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+:root {
+	/* helpful CSS variables for any custom components */
+	--color-primary-50: #EFF6FF;
+	--color-primary-500: #3B82F6;
+	--color-primary-600: #2563EB;
+	--color-surface-50: #FFFFFF;
+	--color-surface-100: #FBFDFF;
+	--color-surface-200: #F8FAFC;
+	--color-surface-300: #F1F5F9;
+	--color-default-900: #111827;
+}
+
+html, body {
+	height: 100%;
+}
+
+body {
+	/* use surface as the main page background; subtle radial highlight for depth */
+	background-color: var(--color-surface-100);
+	color: var(--color-default-900);
+	background-image: radial-gradient(circle at 10% 10%, rgba(59,130,246,0.03), transparent 120px);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* helper utility for a soft blue CTA background when not using Tailwind classes */
+.btn-primary {
+	background-color: var(--color-primary-500);
+	color: white;
+	padding: 0.5rem 1rem;
+	border-radius: 0.375rem;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	box-shadow: 0 6px 18px rgba(59,130,246,0.12);
+	transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+}
+
+.card-surface {
+	background-color: var(--color-surface-50);
+	border: 1px solid rgba(16,24,40,0.04);
+	border-radius: 0.5rem;
+	box-shadow: 0 8px 24px rgba(16,24,40,0.06);
+}
+
+/* Blue accent utilities */
+.text-accent { color: var(--color-primary-600); }
+.bg-accent { background-color: var(--color-primary-50); }
+.border-accent { border-color: rgba(59,130,246,0.16); }
+
+/* Card shadow variations */
+.card-shadow-sm { box-shadow: 0 4px 12px rgba(16,24,40,0.04); }
+.card-shadow-md { box-shadow: 0 8px 24px rgba(16,24,40,0.06); }
+.card-shadow-lg { box-shadow: 0 20px 48px rgba(16,24,40,0.08); }
+
+/* Button hover/focus states for accessibility */
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 30px rgba(59,130,246,0.14); }
+.btn-primary:active { transform: translateY(0); box-shadow: 0 6px 18px rgba(59,130,246,0.10); }
+.btn-primary:focus { outline: 3px solid rgba(59,130,246,0.18); outline-offset: 2px; }
+
+/* subtle section background for contrast */
+.section-surface { background-color: var(--color-surface-100); }
